@@ -1,0 +1,84 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ApiKey {
+  id            String    @id @default(cuid())
+  key           String    @unique // Questo conterrà l'hash della chiave API reale
+  owner         String
+  tier          ApiKeyTier
+  usageCount    Int       @default(0)
+  lastResetDate DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+}
+
+enum ApiKeyTier {
+  UNLIMITED
+  LIMITED
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  icon        String
+  submissions Submission[]
+}
+
+model Cryptocurrency {
+  id          String    @id @default(uuid())
+  name        String
+  symbol      String
+  icon        String
+  submissions Submission[]
+}
+
+model Submission {
+  id               String     @id @default(uuid())
+  walletAddress    String
+  category         Category   @relation(fields: [categoryId], references: [id])
+  categoryId       String
+  cryptocurrency   Cryptocurrency @relation(fields: [cryptocurrencyId], references: [id])
+  cryptocurrencyId String
+  reason           String?
+  websiteUrl       String?
+  reportedOwner    String?
+  status           String
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  adminNotes       String?
+  submitterIp      String?
+}
+
+model SystemSetting {
+  key   String @id
+  value String
+}
+
+model AdminUser {
+  id                  String    @id @default(cuid())
+  username            String    @unique
+  password            String
+  twoFactorSecret     String?
+  twoFactorEnabled    Boolean   @default(false)
+  failedLoginAttempts Int       @default(0)
+  lockoutUntil        DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model RateLimit {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  count     Int
+  lastReset DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ip])
+}

@@ -1,0 +1,38 @@
+module.exports = {
+  apps: [
+    {
+      name: 'wallet-watch',
+      script: 'npm',
+      args: 'start',
+      // Opzioni aggiuntive
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      // Variabili d'ambiente
+      // NON INSERIRE VALORI REALI QUI.
+      // Questo è solo un modello. Crea un file ecosystem.config.js sulla tua VPS
+      // e inserisci lì le tue credenziali.
+      env: {
+        NODE_ENV: 'development',
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        // Esempio di stringa di connessione per MariaDB
+        // Sostituisci con le tue credenziali reali nel file ecosystem.config.js
+        DATABASE_URL: 'mysql://USER:PASSWORD@HOST:PORT/DATABASE',
+
+        // Chiave segreta per reCAPTCHA (se la usi in produzione)
+        RECAPTCHA_SECRET_KEY: 'TUA_CHIAVE_SEGRETA_RECAPTCHA',
+        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: 'TUA_CHIAVE_PUBBLICA_RECAPTCHA',
+
+        // Chiave segreta per la sessione di autenticazione (JWT)
+        // Generare con: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+        AUTH_SECRET: 'TUA_AUTH_SECRET_GENERATA',
+        
+        // La porta su cui Next.js deve avviarsi
+        PORT: 3000,
+      },
+    },
+  ],
+};
